@@ -22,6 +22,16 @@ The library manages:
 
 ---
 
+## Documentation
+
+Full API guidelines and specifications are available in the `docs/` folder:
+
+- [Getting Started](docs/getting-started.md)
+- [Client API Reference](docs/client.md)
+- [Error Handling & Taxonomy](docs/errors.md)
+
+---
+
 ## Architecture
 
 The project is structured as a pure TypeScript module (`core/`), completely free of third-party framework or runtime dependencies. It can be used anywhere: in Node.js scripts, Telegram bots, frontend web apps, etc.
