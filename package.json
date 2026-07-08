@@ -25,7 +25,7 @@
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "test": "tsc --noEmit",
-    "format": "prettier --write .",
+    "format": "prettier --write . --logLevel warn",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "checks": "npm run format && npm run typecheck && npm run lint"

@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
-import { GeminiClient } from "../core/client";
-import { validateApiKey } from "../core/validation";
-import { getStoredApiKey, setStoredApiKey, clearStoredApiKey } from "./storage";
+import { useState, useEffect, useMemo } from 'react';
+import { GeminiClient } from '../core/client';
+import { validateApiKey } from '../core/validation';
+import { getStoredApiKey, setStoredApiKey, clearStoredApiKey } from './storage';
 
 export interface UseAIReturn {
   apiKey: string | null;
@@ -29,7 +29,7 @@ export function useAI(keyName?: string): UseAIReturn {
         const stored = await getStoredApiKey(keyName);
         setApiKeyLocal(stored);
       } catch (err) {
-        console.error("Failed to load Gemini key from SecureStore:", err);
+        console.error('Failed to load Gemini key from SecureStore:', err);
       } finally {
         setIsLoading(false);
       }

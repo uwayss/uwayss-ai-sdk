@@ -1,6 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
-import { z } from "zod";
-import { toSDKError, GeminiSDKError } from "./errors";
+import { GoogleGenAI } from '@google/genai';
+import { z } from 'zod';
+import { toSDKError, GeminiSDKError } from './errors';
 
 export interface AskOptions {
   model?: string;
@@ -15,10 +15,10 @@ export interface AskOptions {
 export function stripMarkdownFences(text: string): string {
   let cleaned = text.trim();
   // Strip starting ```json or ```
-  cleaned = cleaned.replace(/^```json\s*/i, "");
-  cleaned = cleaned.replace(/^```\s*/, "");
+  cleaned = cleaned.replace(/^```json\s*/i, '');
+  cleaned = cleaned.replace(/^```\s*/, '');
   // Strip ending ```
-  cleaned = cleaned.replace(/\s*```$/, "");
+  cleaned = cleaned.replace(/\s*```$/, '');
   return cleaned.trim();
 }
 
@@ -27,7 +27,7 @@ export class GeminiClient {
   private readonly apiKey: string | null = null;
 
   constructor(apiKey: string | null | undefined) {
-    if (apiKey && apiKey.trim() !== "") {
+    if (apiKey && apiKey.trim() !== '') {
       this.apiKey = apiKey.trim();
       this.ai = new GoogleGenAI({ apiKey: this.apiKey });
     }
@@ -39,9 +39,9 @@ export class GeminiClient {
   private getAIOrThrow(): GoogleGenAI {
     if (!this.ai || !this.apiKey) {
       throw new GeminiSDKError(
-        "bad_key",
-        "No Gemini API key is configured. Please provide a valid key.",
-        null
+        'bad_key',
+        'No Gemini API key is configured. Please provide a valid key.',
+        null,
       );
     }
     return this.ai;
@@ -52,7 +52,7 @@ export class GeminiClient {
    */
   async ask(prompt: string, options?: AskOptions): Promise<string> {
     const ai = this.getAIOrThrow();
-    const model = options?.model || "gemini-2.5-flash";
+    const model = options?.model || 'gemini-2.5-flash';
 
     try {
       const response = await ai.models.generateContent({
@@ -65,7 +65,7 @@ export class GeminiClient {
         },
       });
 
-      return response.text || "";
+      return response.text || '';
     } catch (err) {
       throw toSDKError(err);
     }
@@ -76,7 +76,7 @@ export class GeminiClient {
    */
   async *askStream(prompt: string, options?: AskOptions): AsyncGenerator<string, void, unknown> {
     const ai = this.getAIOrThrow();
-    const model = options?.model || "gemini-2.5-flash";
+    const model = options?.model || 'gemini-2.5-flash';
 
     let responseStream;
     try {
@@ -108,13 +108,9 @@ export class GeminiClient {
    * Hardened structured output helper. Strips markdown fences, parses,
    * validates against a caller-provided Zod schema, and retries once on failure.
    */
-  async askJSON<T>(
-    prompt: string,
-    schema: z.ZodSchema<T>,
-    options?: AskOptions
-  ): Promise<T> {
+  async askJSON<T>(prompt: string, schema: z.ZodSchema<T>, options?: AskOptions): Promise<T> {
     const ai = this.getAIOrThrow();
-    const model = options?.model || "gemini-2.5-flash";
+    const model = options?.model || 'gemini-2.5-flash';
 
     // Merge options to ask for application/json output if possible
     const runAttempt = async (attemptPrompt: string): Promise<string> => {
@@ -125,13 +121,13 @@ export class GeminiClient {
           temperature: options?.temperature,
           maxOutputTokens: options?.maxOutputTokens,
           systemInstruction: options?.systemInstruction,
-          responseMimeType: "application/json",
+          responseMimeType: 'application/json',
         },
       });
-      return response.text || "";
+      return response.text || '';
     };
 
-    let lastText = "";
+    let lastText = '';
     try {
       // First attempt
       lastText = await runAttempt(prompt);
@@ -169,14 +165,28 @@ Please respond with a corrected, strictly compliant JSON representation.]`;
    * Fetches available models from Google Gemini API.
    * Returns a list of available model metadata containing name, description, etc.
    */
-  async listModels(): Promise<Array<{ name: string; displayName?: string; description?: string; inputTokenLimit?: number; outputTokenLimit?: number }>> {
+  async listModels(): Promise<
+    Array<{
+      name: string;
+      displayName?: string;
+      description?: string;
+      inputTokenLimit?: number;
+      outputTokenLimit?: number;
+    }>
+  > {
     const ai = this.getAIOrThrow();
     try {
       const pager = await ai.models.list();
-      const modelsList: Array<{ name: string; displayName?: string; description?: string; inputTokenLimit?: number; outputTokenLimit?: number }> = [];
+      const modelsList: Array<{
+        name: string;
+        displayName?: string;
+        description?: string;
+        inputTokenLimit?: number;
+        outputTokenLimit?: number;
+      }> = [];
       for await (const model of pager) {
         modelsList.push({
-          name: model.name || "",
+          name: model.name || '',
           displayName: (model as any).displayName,
           description: (model as any).description,
           inputTokenLimit: (model as any).inputTokenLimit,
@@ -190,38 +200,38 @@ Please respond with a corrected, strictly compliant JSON representation.]`;
   }
 
   /**
-   * Note: The Google Gemini Developer API does not expose a direct REST endpoint 
-   * to query the remaining quota or token limits programmatically for an API key. 
+   * Note: The Google Gemini Developer API does not expose a direct REST endpoint
+   * to query the remaining quota or token limits programmatically for an API key.
    * Active limits must be viewed in Google AI Studio or Google Cloud Console dashboards.
-   * 
+   *
    * This method returns static metadata about typical rate limits for the specified model
    * to aid consumption strategies.
    */
-  async getModelLimits(model: string = "gemini-2.5-flash"): Promise<{
+  async getModelLimits(model: string = 'gemini-2.5-flash'): Promise<{
     requestsPerMinute: number;
     requestsPerDay?: number;
     tokensPerMinute?: number;
-    estimatedTier: "free" | "paid" | "unknown";
+    estimatedTier: 'free' | 'paid' | 'unknown';
   }> {
     const m = model.toLowerCase();
-    if (m.includes("gemini-2.5-flash") || m.includes("gemini-2.0-flash")) {
+    if (m.includes('gemini-2.5-flash') || m.includes('gemini-2.0-flash')) {
       return {
         requestsPerMinute: 15,
         requestsPerDay: 1500,
         tokensPerMinute: 1_000_000,
-        estimatedTier: "free",
+        estimatedTier: 'free',
       };
-    } else if (m.includes("gemini-2.5-pro") || m.includes("gemini-2.0-pro")) {
+    } else if (m.includes('gemini-2.5-pro') || m.includes('gemini-2.0-pro')) {
       return {
         requestsPerMinute: 2,
         requestsPerDay: 50,
         tokensPerMinute: 32_000,
-        estimatedTier: "free",
+        estimatedTier: 'free',
       };
     }
     return {
       requestsPerMinute: 15,
-      estimatedTier: "unknown",
+      estimatedTier: 'unknown',
     };
   }
 }
