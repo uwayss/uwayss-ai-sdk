@@ -24,10 +24,7 @@ The library manages:
 
 ## Architecture
 
-The project contains two distinct layers to keep dependencies light:
-
-- **`core/`** (Imported via `uwayss-ai-sdk`): Zero React Native or Expo dependencies. Can be used in plain Node scripts, Telegram bots, etc.
-- **`expo/`** (Imported via `uwayss-ai-sdk/expo`): Layers on `expo-secure-store` to manage key persistence, exposes a `useAI` React hook, and offers a premium drop-in "Enter API Key" onboarding screen.
+The project is structured as a pure TypeScript module (`core/`), completely free of third-party framework or runtime dependencies. It can be used anywhere: in Node.js scripts, Telegram bots, frontend web apps, etc.
 
 ---
 
@@ -71,63 +68,6 @@ console.log(models); // Array of available model metadata
 const limits = await client.getModelLimits('gemini-2.5-flash');
 console.log(limits); // { requestsPerMinute: 15, requestsPerDay: 1500, tokensPerMinute: 1000000, estimatedTier: "free" }
 ```
-
----
-
-## Expo/React Native Usage Example
-
-First, install peers in your Expo app:
-
-```bash
-npx expo install expo-secure-store react-native
-```
-
-### 1. hook & Storage
-
-```tsx
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { useAI } from 'uwayss-ai-sdk/expo';
-
-export default function App() {
-  const { client, hasKey, isLoading, clearKey } = useAI();
-
-  if (isLoading) return <Text>Loading key...</Text>;
-  if (!hasKey) return <OnboardingScreen />;
-
-  const handlePress = async () => {
-    const res = await client?.ask('Name a color');
-    alert(res);
-  };
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title="Ask Gemini" onPress={handlePress} />
-      <Button title="Log Out / Clear Key" onPress={clearKey} />
-    </View>
-  );
-}
-```
-
-### 2. Drop-in Onboarding Screen
-
-```tsx
-import React from 'react';
-import { useAI, KeyOnboarding } from 'uwayss-ai-sdk/expo';
-
-function OnboardingScreen() {
-  const { setKey } = useAI();
-
-  return (
-    <KeyOnboarding
-      onSaveKey={setKey}
-      onSuccess={() => console.log('Key set successfully! Refreshing UI...')}
-    />
-  );
-}
-```
-
----
 
 ## License
 

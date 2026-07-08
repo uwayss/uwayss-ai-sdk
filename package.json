@@ -1,7 +1,7 @@
 {
   "name": "uwayss-ai-sdk",
   "version": "0.1.0",
-  "description": "A personal TypeScript SDK for Google Gemini with built-in key management, schema-validated JSON outputs, and React Native / Expo support.",
+  "description": "A personal TypeScript SDK for Google Gemini with built-in key management and schema-validated JSON outputs.",
   "main": "./dist/core/index.js",
   "module": "./dist/core/index.mjs",
   "types": "./dist/core/index.d.ts",
@@ -10,11 +10,6 @@
       "types": "./dist/core/index.d.ts",
       "import": "./dist/core/index.mjs",
       "require": "./dist/core/index.js"
-    },
-    "./expo": {
-      "types": "./dist/expo/index.d.ts",
-      "import": "./dist/expo/index.mjs",
-      "require": "./dist/expo/index.js"
     }
   },
   "files": [
@@ -34,8 +29,6 @@
     "gemini",
     "google-ai",
     "sdk",
-    "react-native",
-    "expo",
     "typescript",
     "byok"
   ],
@@ -45,33 +38,12 @@
     "@google/genai": "^2.10.0",
     "zod": "^3.23.8"
   },
-  "peerDependencies": {
-    "expo-secure-store": "^13.0.0 || ^14.0.0 || ^15.0.0",
-    "react": ">=18.0.0",
-    "react-native": ">=0.72.0"
-  },
-  "peerDependenciesMeta": {
-    "expo-secure-store": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    }
-  },
   "devDependencies": {
-    "@types/react": "~18.2.45",
-    "@types/react-native": "^0.73.0",
     "@typescript-eslint/eslint-plugin": "^8.63.0",
     "@typescript-eslint/parser": "^8.63.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
-    "expo-secure-store": "^13.0.2",
     "prettier": "^3.9.4",
-    "react": "18.2.0",
-    "react-native": "^0.74.1",
     "tsup": "^8.1.0",
     "typescript": "^5.4.5"
   }
